@@ -1,5 +1,4 @@
 package logger
-
 import (
     "fmt"
     "io"
@@ -7,8 +6,15 @@ import (
     "strings"
     "time"
 )
-//default log level
-var logLevel = 3
+type Logger struct {
+    logLevel int
+}
+//New returns a new logger with a default log level of 3
+func New() *Logger {
+    return &Logger{
+        logLevel: 3,
+    }
+}
 /*SetLogLevel updates the logging level
 0 = no logging except fatal
 1 = errors and fatal only
@@ -17,51 +23,52 @@ var logLevel = 3
 4 nci = info error and fatal
 5 = debug info error and fatal
 */
-func SetLogLevel(level int) {
-    logLevel = level
+func (l *Logger) SetLogLevel(level int) {
+    l.logLevel = level
 }
-func SetOutput(w io.Writer) {
+//SetOutput directs the log output to a writer
+func (l *Logger) SetOutput(w io.Writer) {
     log.SetOutput(w)
 }
 //Debug log debug information
-func Debug(l ...interface{}) {
-    if logLevel >= 5 {
+func (l *Logger) Debug(v ...interface{}) {
+    if l.logLevel >= 5 {
         log.Printf(
             "%s\t%s\t%s",
             "DEBUG",
             time.Now().Format("2006-01-02 15:04"),
-            fmt.Sprintf(strings.Repeat("%+v ", len(l)), l...),
+            fmt.Sprintf(strings.Repeat("%+v ", len(v)), v...),
         )
     }
 }
 //Info log information
-func Info(l ...interface{}) {
-    if logLevel >= 3 {
+func (l *Logger) Info(v ...interface{}) {
+    if l.logLevel >= 3 {
         log.Printf(
             "%s\t%s\t%s",
             "INFO",
             time.Now().Format("2006-01-02 15:04"),
-            fmt.Sprintf(strings.Repeat("%+v ", len(l)), l...),
+            fmt.Sprintf(strings.Repeat("%+v ", len(v)), v...),
         )
     }
 }
 //Error log errors
-func Error(l ...interface{}) {
-    if logLevel >= 1 {
+func (l *Logger) Error(v ...interface{}) {
+    if l.logLevel >= 1 {
         log.Printf(
             "%s\t%s\t%s",
             "ERROR",
             time.Now().Format("2006-01-02 15:04"),
-            fmt.Sprintf(strings.Repeat("%+v ", len(l)), l...),
+            fmt.Sprintf(strings.Repeat("%+v ", len(v)), v...),
         )
     }
 }
 //Fatal log errors and die
-func Fatal(l ...interface{}) {
+func (l *Logger) Fatal(v ...interface{}) {
     log.Fatalf(
         "%s\t%s\t%s",
         "FATAL",
         time.Now().Format("2006-01-02 15:04"),
-        fmt.Sprintf(strings.Repeat("%+v ", len(l)), l...),
+        fmt.Sprintf(strings.Repeat("%+v ", len(v)), v...),
     )
 }
