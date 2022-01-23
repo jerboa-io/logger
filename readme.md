@@ -7,9 +7,11 @@ var log = logger.New()
 log.SetLogLevel(int)
 
 0 = no logging except fatal
-1 = errors and fatal 
-3 = info, error, and fatal
-5 = debug, info, error, and fatal
+1 = errors and fatal only
+2 = warning, errors, and fatal only
+3 = info, warning, error, and fatal
+4 nci = info error and fatal
+5 = debug info error and fatal
 
 set a writer
 log.SetOutput(io.Writer)
@@ -30,6 +32,8 @@ Available functions:
 log.Debug()
 
 log.Info()
+
+log.Warn()
 
 log.Error()
 
