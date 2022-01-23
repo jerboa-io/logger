@@ -18,8 +18,8 @@ func New() *Logger {
 /*SetLogLevel updates the logging level
 0 = no logging except fatal
 1 = errors and fatal only
-2 nci = errors and fatal only
-3 = info error and fatal
+2 = warning, errors, and fatal only
+3 = info, warning, error, and fatal
 4 nci = info error and fatal
 5 = debug info error and fatal
 */
@@ -34,7 +34,7 @@ func (l *Logger) SetOutput(w io.Writer) {
 func (l *Logger) Debug(v ...interface{}) {
     if l.logLevel >= 5 {
         log.Printf(
-            "%s\t%s\t%s",
+            "level=%s\tts=%s\tmsg=%s",
             "DEBUG",
             time.Now().Format("2006-01-02 15:04"),
             fmt.Sprintf(strings.Repeat("%+v ", len(v)), v...),
@@ -45,8 +45,19 @@ func (l *Logger) Debug(v ...interface{}) {
 func (l *Logger) Info(v ...interface{}) {
     if l.logLevel >= 3 {
         log.Printf(
-            "%s\t%s\t%s",
+            "level=%s\tts=%s\tmsg=%s",
             "INFO",
+            time.Now().Format("2006-01-02 15:04"),
+            fmt.Sprintf(strings.Repeat("%+v ", len(v)), v...),
+        )
+    }
+}
+//Warn log information
+func (l *Logger) Warn(v ...interface{}) {
+    if l.logLevel >= 2 {
+        log.Printf(
+            "level=%s\tts=%s\tmsg=%s",
+            "WARN",
             time.Now().Format("2006-01-02 15:04"),
             fmt.Sprintf(strings.Repeat("%+v ", len(v)), v...),
         )
@@ -56,7 +67,7 @@ func (l *Logger) Info(v ...interface{}) {
 func (l *Logger) Error(v ...interface{}) {
     if l.logLevel >= 1 {
         log.Printf(
-            "%s\t%s\t%s",
+            "level=%s\tts=%s\tmsg=%s",
             "ERROR",
             time.Now().Format("2006-01-02 15:04"),
             fmt.Sprintf(strings.Repeat("%+v ", len(v)), v...),
@@ -66,7 +77,7 @@ func (l *Logger) Error(v ...interface{}) {
 //Fatal log errors and die
 func (l *Logger) Fatal(v ...interface{}) {
     log.Fatalf(
-        "%s\t%s\t%s",
+        "level=%s\tts=%s\tmsg=%s",
         "FATAL",
         time.Now().Format("2006-01-02 15:04"),
         fmt.Sprintf(strings.Repeat("%+v ", len(v)), v...),
