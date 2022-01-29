@@ -3,6 +3,7 @@ import (
     "fmt"
     "io"
     "log"
+    "strconv"
     "strings"
     "time"
 )
@@ -12,10 +13,11 @@ type Logger struct {
 //New returns a new logger with a default log level of 3
 func New() *Logger {
     return &Logger{
-        logLevel: 3,
+        logLevel: 3, // info, warning, error, and fatal
     }
 }
 /*SetLogLevel updates the logging level
+This accepts an int or string for convenience
 0 = no logging except fatal
 1 = errors and fatal only
 2 = warning, errors, and fatal only
@@ -23,13 +25,36 @@ func New() *Logger {
 4 nci = info error and fatal
 5 = debug info error and fatal
 */
-func (l *Logger) SetLogLevel(level int) {
-    l.logLevel = level
+func (l *Logger) SetLogLevel(level interface{}) {
+    switch v := level.(type) {
+    case int:
+        l.logLevel = v
+    case int32:
+        l.logLevel = int(v)
+    case int64:
+        l.logLevel = int(v)
+    case string:
+        newLevel,err := strconv.Atoi(v)
+        if err != nil {
+            l.Error(err)
+            return
+        }
+        l.logLevel = newLevel
+    default:
+        l.Error("unexpected type when setting logging level")
+    }
+ 
 }
-//SetOutput directs the log output to a writer
+//SetOutput directs the log output to a single writer
 func (l *Logger) SetOutput(w io.Writer) {
     log.SetOutput(w)
 }
+
+//SetOutputs directs the log output to a multi writer
+func (l *Logger) SetOutputs(w []io.Writer) {
+    log.SetOutput(io.MultiWriter(w...))
+}
+
 //Debug log debug information
 func (l *Logger) Debug(v ...interface{}) {
     if l.logLevel >= 5 {
