@@ -12,6 +12,7 @@ type Logger struct {
 }
 //New returns a new logger with a default log level of 3
 func New() *Logger {
+    log.SetFlags(0)
     return &Logger{
         logLevel: 3, // info, warning, error, and fatal
     }
